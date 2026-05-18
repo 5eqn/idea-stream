@@ -49,3 +49,44 @@
 
 - Think of you're providing a service to top academic research group. They will drain stream.db based on their cadence (not actually removing items from db, but marking them internally as read, simulating a stream). There will be a quality-quantity balance, if you choose quality, they may complain that you're giving new rows too slow; if you choose quantity, they may complain the degrade of quality. So try to think for their needs, if you get steered by user preference, keep suitable documentations for preference fulfilling so other agents would know.
 - Do not invoke subagents.
+
+## Stream Ingestion State (General)
+This section tracks general progress and conventions for arxiv paper ingestion across agents.
+
+### How to use state files
+- Each agent reads the relevant state file for their assigned topic before starting work to know what's already been covered.
+- After completing a batch, update the relevant per-topic state file with the new cursor position.
+- The `search_state` table in `stream.db` is the authoritative source of truth; state files provide human-readable context.
+
+### State File Structure
+- **General state**: Defined in this CLAUDE.md (conventions, API notes, known issues, cross-topic rules).
+- **Per-topic state**: Each topic has a dedicated `state_<topic>.md` file that tracks:
+  - Search queries used (with pagination status)
+  - Total papers processed
+  - Date range covered
+  - Last processed paper date
+  - Active agents working on the topic
+
+### Agent Rules
+- **Single topic focus**: Each agent should work on **one topic only** at a time. Do not switch between topics during a work session unless explicitly instructed.
+- Claim a topic by adding your agent ID to the "Active agents" section of the topic's state file before starting work.
+- Remove your agent ID from the "Active agents" section when you finish your batch.
+
+### Conventions
+- **Agent ID**: Use a unique identifier (e.g., `agent-YYYYMMDD-HHMMSS`) when inserting papers and logging.
+- **Batch size**: Aim for 10-20 papers per batch to balance speed and quality.
+- **Dedup**: The database enforces `(id, topic)` uniqueness. If a paper is relevant to both topics, insert it twice with different topics and potentially different relevance scores.
+- **Rating rigor**: Follow the rating standard in CLAUDE.md strictly. Read the paper abstract (at minimum) before rating.
+- **Date order**: Process newest papers first, working backwards in time.
+- **Search strategy**: Use the arxiv API (`http://export.arxiv.org/api/query`) with `start` and `max_results` parameters to paginate through results. Track the `last_start` value in `search_state` table.
+
+### Arxiv API notes
+- Base URL: `http://export.arxiv.org/api/query`
+- Parameters: `search_query`, `start`, `max_results`, `sortBy` (relevance/submittedDate), `sortOrder` (descending)
+- Rate limit: Be respectful — no more than 1 request per 3 seconds.
+- Each query returns up to 2000 results max. Use pagination with `start` offset.
+- Paper ID format: e.g., `2505.12345` or `cs/0701001`
+
+### Known issues
+- Arxiv API consistently times out. Use WebSearch + webReader as fallback for fetching paper abstracts.
+- WebSearch rate limits (429 errors) — space requests to avoid hitting limits.
