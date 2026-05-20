@@ -9,17 +9,20 @@ This file tracks the progress of arxiv paper ingestion for the "embodiedai" topi
 `humanoid robot brachiation swinging arm locomotion agile movement` (batch 151),
 `humanoid robot locomotion unified walking running recovery whole body state estimation` (batch 152),
 `ti:humanoid broad title search` (batches 153-175)
-- **Papers processed**: 2293
-- **Date range covered**: 2007-08-06 to 2026-05-18
-- **Last processed paper date**: 2025-02-27 (ti:"whole body control" batch 30, start=30, 40/84 processed, net 4 new)
+- **Papers processed**: 2336
+- **Date range covered**: 2007-08-06 to 2026-05-19
+- **Last processed paper date**: 2026-05-19
 - **Active agents**: agent-20260519-loop2m
-- ti:humanoid broad title search EXHAUSTED — reached API pagination limit both descending and ascending, ~845 of 885 results covered
-`ti:"bipedal walking"` (batches 158-162, EXHAUSTED 49/49), `ti:"bipedal robot"` (batches 163-174, EXHAUSTED 90/90)
-`ti:"whole body control"` (batch 175, PAUSED at 30/84, 4 new from 30 — HIGH overlap: 26/30 dupes. Rate limited)
-`all:"centroidal dynamics" AND all:legged` (batch 176, EXHAUSTED 14/14)
-`all:"hybrid zero dynamics" AND all:walking` (batch 177-179, EXHAUSTED 29/29)
-`all:"capture point" AND all:walking` (batch 180, EXHAUSTED 8/8)
-`all:"ZMP" AND all:bipedal` (batch 181, EXHAUSTED 7/7)
-`cat:cs.RO AND all:bipedal ANDNOT ti:bipedal ANDNOT ti:humanoid ANDNOT ti:quadruped` (batches 182-210, EXHAUSTED 245/245)
-`cat:cs.RO AND all:humanoid ANDNOT ti:humanoid` (batches 211-229, EXHAUSTED 961/961, ~70% new yield, added 349 papers)
-- **Active agents**: agent-20260519-loop2m
+- **Status note 2026-05-20**: May 20 arxiv batch processed: 3 new humanoid papers (CEER loco-manipulation, SPARK safety stress test, XR teleoperation comms). DB at 2336 covering 2007-2026. Monitoring mode for new publications.
+
+### Exhausted Searches
+- ti:humanoid broad title search EXHAUSTED — ~845 of 885 results covered (API pagination limit)
+- `ti:"bipedal walking"` EXHAUSTED 49/49
+- `ti:"bipedal robot"` EXHAUSTED 90/90
+- `ti:"whole body control"` EXHAUSTED 84/84, net 27 new (HIGH overlap with ti:humanoid confirmed)
+- `all:"centroidal dynamics" AND all:legged` EXHAUSTED 14/14
+- `all:"hybrid zero dynamics" AND all:walking` EXHAUSTED 29/29
+- `all:"capture point" AND all:walking` EXHAUSTED 8/8
+- `all:"ZMP" AND all:bipedal` EXHAUSTED 7/7
+- `cat:cs.RO AND all:bipedal ANDNOT ti:bipedal ANDNOT ti:humanoid ANDNOT ti:quadruped` EXHAUSTED 245/245
+- `cat:cs.RO AND all:humanoid ANDNOT ti:humanoid` EXHAUSTED 961/961, ~70% new yield, added 349 papers

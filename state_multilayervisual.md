@@ -74,8 +74,22 @@ This file tracks the progress of arxiv paper ingestion for the "multilayervisual
 `cs.CV recent listing page 13 skip=325` (batch 180),
 `cs.CV recent listing page 14 skip=350` (batch 180),
 `cs.CV recent listing page 15 skip=375` (batch 180),
-`cs.CV recent listing page 16 skip=400` (batch 180)
-- **Papers processed**: 433
-- **Date range covered**: 2023-08-26 to 2026-05-19
-- **Last processed paper date**: 2026-05-19
+`cs.CV recent listing page 16 skip=400` (batch 180),
+`cs.CV recent listing page 17 skip=425` (batch 181),
+`cs.CV recent listing page 18 skip=450` (batch 181),
+`cs.CV recent listing page 19 skip=475` (batch 181),
+`cs.CV recent listing page 20 skip=500` (batch 182),
+`cs.CV recent listing page 21 skip=525` (batch 182),
+`cs.CV recent listing page 22 skip=550` (batch 183),
+`cs.CV recent listing page 23 skip=575` (batch 183),
+`cs.RO recent listing page 2 skip=50` (batch 184),
+`cs.RO recent listing page 3 skip=100` (batch 185),
+`cs.RO recent listing page 4 skip=150` (batch 186),
+`cs.AI recent listing pages 1-3` (batch 187),
+`visual token compression efficient video understanding` (batch 187),
+`visual token pruning world model robot VLA 2026` (batch 187),
+`cs.CV recent listing page 13 skip=600` (batch 187)
+- **Papers processed**: 469
+- **Date range covered**: 2024-06-12 to 2026-05-20
+- **Last processed paper date**: 2026-05-20
 - **Active agents**: agent-20260520-070000
