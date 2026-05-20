@@ -9,13 +9,13 @@ This file tracks the progress of arxiv paper ingestion for the "embodiedai" topi
 `humanoid robot brachiation swinging arm locomotion agile movement` (batch 151),
 `humanoid robot locomotion unified walking running recovery whole body state estimation` (batch 152),
 `ti:humanoid broad title search` (batches 153-175)
-- **Papers processed**: 2291
-- **Date range covered**: 2007-08-06 to 2011-12-09
-- **Last processed paper date**: 2011-12-09 (cat:cs.RO AND all:humanoid ANDNOT ti:humanoid final batch, start=950, EXHAUSTED 961/961)
+- **Papers processed**: 2293
+- **Date range covered**: 2007-08-06 to 2026-05-18
+- **Last processed paper date**: 2025-02-27 (ti:"whole body control" batch 30, start=30, 40/84 processed, net 4 new)
 - **Active agents**: agent-20260519-loop2m
 - ti:humanoid broad title search EXHAUSTED — reached API pagination limit both descending and ascending, ~845 of 885 results covered
 `ti:"bipedal walking"` (batches 158-162, EXHAUSTED 49/49), `ti:"bipedal robot"` (batches 163-174, EXHAUSTED 90/90)
-`ti:"whole body control"` (batch 175, resumed, 84 total, 20/84 processed — HIGH overlap with ti:humanoid confirmed: 10/10 dupes at start=10)
+`ti:"whole body control"` (batch 175, PAUSED at 30/84, 4 new from 30 — HIGH overlap: 26/30 dupes. Rate limited)
 `all:"centroidal dynamics" AND all:legged` (batch 176, EXHAUSTED 14/14)
 `all:"hybrid zero dynamics" AND all:walking` (batch 177-179, EXHAUSTED 29/29)
 `all:"capture point" AND all:walking` (batch 180, EXHAUSTED 8/8)

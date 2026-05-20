@@ -78,15 +78,43 @@ This section tracks general progress and conventions for arxiv paper ingestion a
 - **Dedup**: The database enforces `(id, topic)` uniqueness. If a paper is relevant to both topics, insert it twice with different topics and potentially different relevance scores.
 - **Rating rigor**: Follow the rating standard in CLAUDE.md strictly. Read the paper abstract (at minimum) before rating.
 - **Date order**: Process newest papers first, working backwards in time.
-- **Search strategy**: Use the arxiv API (`http://export.arxiv.org/api/query`) with `start` and `max_results` parameters to paginate through results. Track the `last_start` value in `search_state` table.
+- **Search strategy**: Primary method is arxiv recent listing pages (`/list/cs.CV/recent`, `/list/cs.RO/recent`) with `?skip=N&show=25` pagination. Secondary method is keyword search via WebFetch to arxiv.org. Track progress in state files. See "Paper Discovery Methods" section for detailed guidance.
 
-### Arxiv API notes
-- Base URL: `http://export.arxiv.org/api/query`
-- Parameters: `search_query`, `start`, `max_results`, `sortBy` (relevance/submittedDate), `sortOrder` (descending)
-- Rate limit: Be respectful — no more than 1 request per 3 seconds.
-- Each query returns up to 2000 results max. Use pagination with `start` offset.
-- Paper ID format: e.g., `2505.12345` or `cs/0701001`
+### Paper Discovery Methods — Effectiveness Guide
+
+#### High-success methods (use these)
+- **Arxiv recent listings (BEST)**: `https://arxiv.org/list/cs.CV/recent` and `https://arxiv.org/list/cs.RO/recent` with `?skip=N&show=M` pagination. These are the most productive paper sources — they return fresh papers with titles and IDs, no timeouts. cs.CV listing typically has 1000+ entries per day; traverse page by page. cs.RO has 200-300 entries/day. Scan titles for relevance keywords, then fetch abstracts selectively.
+  - Pagination format: `?skip=N&show=25` (e.g. skip=0, skip=25, skip=50...)
+  - Also try `cs.AI`, `cs.LG` listings for cross-listed relevant papers.
+- **Individual paper abstracts**: `https://arxiv.org/abs/{paper_id}` via WebFetch — reliably returns title, authors, abstract, submission date. Use this for every candidate before rating.
+- **Selective fetching**: Scan listing page titles first, shortlist only papers with promising titles, then batch-fetch their abstracts (5 at a time works well). Don't fetch every abstract — most papers on a listing page are irrelevant.
+- **Inline SQL INSERT**: `sqlite3 stream.db "INSERT OR IGNORE INTO papers (id, topic, source, paper_date, link, title, quality_score, quality_reason, relevance_score, relevance_reason, date_added, processed_by) VALUES (...);"` — this is the ONLY working INSERT format. Single-quoted SQL, all 12 columns explicit.
+
+#### Low-success methods (avoid or use as fallback only)
+- **Arxiv API** (`export.arxiv.org/api/query`): Consistently times out. Never works under load. DO NOT use as primary method.
+- **WebSearch for arxiv queries**: Returns 503 "No available providers" errors ~70% of the time. Can work occasionally but unreliable.
+- **Date-specific listing URLs** (`/list/cs.CV/2026-05-19`): Returns 400 Bad Request. Use `/list/cs.CV/recent` instead.
+- **Heredoc SQL INSERT** (`sqlite3 stream.db << 'SQL' ...`): Consistently fails with "10 values for 12 columns" errors regardless of format. Do not use.
+- **Keyword search exhaustion**: After ~40-50 search queries on the same topic, new queries return mostly duplicates. When saturation is reached, switch to listing-based discovery.
+
+#### Practical workflow
+1. Fetch arxiv listing page (cs.CV or cs.RO) via WebFetch, starting at skip=0
+2. Scan returned titles for relevance to topic
+3. Batch-fetch abstracts (5 at a time) for promising papers via WebFetch to arxiv.org/abs/{id}
+4. Rate each paper against the rating standard, reading the full abstract
+5. Insert via inline SQL with all 12 columns
+6. Advance to next page (skip += 25)
+7. Update state file with new queries used and paper count
+8. Space listing page fetches by at least ~20 minutes to respect arxiv rate limits
+
+### Database notes
+- Inline SQL format (MUST use): `sqlite3 stream.db "INSERT OR IGNORE INTO papers (id, topic, source, paper_date, link, title, quality_score, quality_reason, relevance_score, relevance_reason, date_added, processed_by) VALUES ('PAPER_ID', 'multilayervisual', 'arxiv', 'DATE', 'https://arxiv.org/abs/PAPER_ID', 'TITLE', Q_SCORE, 'Q_REASON', R_SCORE, 'R_REASON', '2026-05-20', 'agent-20260520-HHMMSS');"`
+- PRIMARY KEY is `(id, topic)` — INSERT OR IGNORE handles deduplication
+- `date_added` uses today's date; `processed_by` uses agent ID
+- **CRITICAL — `paper_date` format**: MUST be `YYYY-MM-DD` (e.g., `2026-04-13`). Invalid formats like `2026-04` (missing day) cause downstream consumers to break. Always verify the exact submission date from the paper's arxiv abstract page before inserting.
 
 ### Known issues
-- Arxiv API consistently times out. Use WebSearch + webReader as fallback for fetching paper abstracts.
-- WebSearch rate limits (429 errors) — space requests to avoid hitting limits.
+- Arxiv API consistently times out. Use listing pages instead.
+- WebSearch for arxiv returns frequent 503 errors. Use WebFetch for listing pages and individual abstracts.
+- WebSearch and WebFetch both have rate limits (429 errors). Space requests; use ScheduleWakeup delays of 1200s+ between batches.
+- Never use heredoc for SQL INSERT — always use inline single-quoted commands.
