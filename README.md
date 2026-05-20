@@ -89,23 +89,11 @@ curl "http://localhost:8080/api/papers?topic=embodiedai&min_quality=7&min_releva
 # 进入项目目录
 cd /path/to/idea-stream
 
-# 启动 Claude Code，进入 goal 模式，针对单个主题持续采集
-claude --goal "Complete all tasks in CLAUDE.md for the 'embodiedai' topic"
+# 启动 Claude Code
+claude
 
 # 或使用 /loop 定时触发（每 10 分钟执行一轮）
 /loop 10m Complete all tasks in CLAUDE.md for the "embodiedai" topic
-```
-
-### 并发 Agent
-
-可以启动多个 Agent 并行工作，各负责一个主题：
-
-```bash
-# Agent A: 负责具身智能
-claude --goal "Work on 'embodiedai' topic: read state_embodiedai.md, collect & rate papers, update state"
-
-# Agent B: 负责视觉压缩
-claude --goal "Work on 'multilayervisual' topic: read state_multilayervisual.md, collect & rate papers, update state"
 ```
 
 Agent 会自动：
@@ -114,6 +102,8 @@ Agent 会自动：
 3. 读取摘要、按标准打分
 4. 写入 `stream.db`（`INSERT OR IGNORE` 自动去重）
 5. 更新状态文件，下一轮 Agent 接续工作
+
+要同时收集多个主题，你需要启动多个 Agent。
 
 ### 消费流数据
 
