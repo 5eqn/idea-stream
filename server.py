@@ -134,6 +134,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
     --amber: #fdcb6e;
     --red: #ff6b6b;
     --blue: #74b9ff;
+    --coral: #e17055;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -313,6 +314,10 @@ HTML_PAGE = r"""<!DOCTYPE html>
     background: rgba(116,185,255,0.12);
     color: var(--blue);
   }
+  .tag-bfmenhance {
+    background: rgba(225,112,85,0.12);
+    color: var(--coral);
+  }
   .title-meta .date {
     font-size: 11px;
     color: var(--text2);
@@ -439,7 +444,6 @@ HTML_PAGE = r"""<!DOCTYPE html>
 
   <div class="filter-group">
     <label>Topic</label>
-    <button class="pill-btn active" data-topic="all">All</button>
     <span id="topic-buttons"></span>
   </div>
 
@@ -474,14 +478,14 @@ const TOPICS = __TOPICS__;
 const SORT_KEY = "__SORT__";
 
 let currentSort = "must_read";
-let currentTopic = "all";
+let currentTopic = TOPICS.length > 0 ? TOPICS[0].topic : "";
 let searchTerm = "";
 
 // --- topic buttons ---
 const topicContainer = document.getElementById("topic-buttons");
-TOPICS.forEach(t => {
+TOPICS.forEach((t, i) => {
   const btn = document.createElement("button");
-  btn.className = "pill-btn";
+  btn.className = "pill-btn" + (i === 0 ? " active" : "");
   btn.dataset.topic = t.topic;
   btn.textContent = t.topic + " (" + t.count + ")";
   topicContainer.appendChild(btn);
@@ -531,7 +535,7 @@ function rClass(s) { return s >= 8 ? "r-high" : s >= 6 ? "r-mid" : "r-low"; }
 
 function render() {
   let papers = PAPERS.slice();
-  if (currentTopic !== "all") papers = papers.filter(p => p.topic === currentTopic);
+  if (currentTopic) papers = papers.filter(p => p.topic === currentTopic);
   if (searchTerm) {
     const lower = searchTerm.toLowerCase();
     papers = papers.filter(p =>

@@ -2,6 +2,7 @@
 
 - "embodiedai": Advances in embodied intelligence that are helpful to Unitree G1 29DOF humanoid robot without dexterous hand. A research targeting Unitree G1 specifically would satisfy this. A research doing cross-embodiment humanoid-robot foundation model would satisfy this. A research focusing on locomotion and dexterous hand manipulation would satisfy this, because even if it features dexterous hand, the locomotion and arm-moving part is helpful to robot without dexterous hand. A research for robotic arm would not satisfy this. A research for pure VLM without embodiment would not satisfy this.
 - "multilayervisual": Advances in visual processing in the direction that: an intelligent visual agent should eventually be able to utilize raw, large visual input, and compresses multi-layered such information all the way down to around 10 bits per second, yet useful, visual data stream, that aids with video  understanding and VLA / World Model and such, ultimately helping the humanity build visual AGI. Judge yourself if an article aligns with requested direction.
+- "bfmenhance": Is it possible to enhance the performance of a behaviour foundation model for humanoid robot in Sim2Real, specifically Unitree G1 29DOF, with some creative way so that it's 10x more compute-effective than scaling the training data alone? (old training process already involves domain randomization, baseline is HoloMotion & GEAR-SONIC) For example by doing some feature engineering, co-training with some other models, or other creative ways that can inspire me?
 
 ## Source register
 
@@ -43,6 +44,7 @@
 ## Task
 
 - [x] Reify rating standard for quality & relevance for each score point
+- [x] Add topic "bfmenhance" effectively into this project
 - [ ] Add rows in stream.db infinitely with non-duplicative items, each row with topic, source, date, id (non duplicative), link, quality (X out of 10) + short reason (based on whether this work is from renouned authors and the actual quality of this work), relevance (X out of 10) + short reason (based on the topic register), date. This work will be done by multiple agents sequentially or in parallel, so keep suitable state documentations to make this system theoretically possible to run forever steadily (without searching over the same thing again and again) and exhaust the whole upstream source and rate every single item in it.
 
 ## Notes
@@ -83,15 +85,16 @@ This section tracks general progress and conventions for arxiv paper ingestion a
 ### Paper Discovery Methods — Effectiveness Guide
 
 #### High-success methods (use these)
+- **Cross-topic reuse from stream.db**: When adding a new topic, check `stream.db` for papers already ingested under other topics that may also be relevant to the new topic. Query by keyword or by related topic (e.g., papers under "embodiedai" may also apply to "bfmenhance"). This is faster than re-fetching from arxiv and avoids duplicate search work. Rate the paper against the new topic's criteria and insert with the new topic.
 - **Arxiv recent listings (BEST)**: `https://arxiv.org/list/cs.CV/recent` and `https://arxiv.org/list/cs.RO/recent` with `?skip=N&show=M` pagination. These are the most productive paper sources — they return fresh papers with titles and IDs, no timeouts. cs.CV listing typically has 1000+ entries per day; traverse page by page. cs.RO has 200-300 entries/day. Scan titles for relevance keywords, then fetch abstracts selectively.
   - Pagination format: `?skip=N&show=25` (e.g. skip=0, skip=25, skip=50...)
   - Also try `cs.AI`, `cs.LG` listings for cross-listed relevant papers.
+- **Arxiv API** (`export.arxiv.org/api/query`): Has rigor rate limit, although tons of embodied AI papers have been found this way. Prefer using broad search like `ti:"whole body control"` and exhaust results from there, instead of using a large search query.
 - **Individual paper abstracts**: `https://arxiv.org/abs/{paper_id}` via WebFetch — reliably returns title, authors, abstract, submission date. Use this for every candidate before rating.
 - **Selective fetching**: Scan listing page titles first, shortlist only papers with promising titles, then batch-fetch their abstracts (5 at a time works well). Don't fetch every abstract — most papers on a listing page are irrelevant.
 - **Inline SQL INSERT**: `sqlite3 stream.db "INSERT OR IGNORE INTO papers (id, topic, source, paper_date, link, title, quality_score, quality_reason, relevance_score, relevance_reason, date_added, processed_by) VALUES (...);"` — this is the ONLY working INSERT format. Single-quoted SQL, all 12 columns explicit.
 
 #### Low-success methods (avoid or use as fallback only)
-- **Arxiv API** (`export.arxiv.org/api/query`): Consistently times out. Never works under load. DO NOT use as primary method.
 - **WebSearch for arxiv queries**: Returns 503 "No available providers" errors ~70% of the time. Can work occasionally but unreliable.
 - **Date-specific listing URLs** (`/list/cs.CV/2026-05-19`): Returns 400 Bad Request. Use `/list/cs.CV/recent` instead.
 - **Heredoc SQL INSERT** (`sqlite3 stream.db << 'SQL' ...`): Consistently fails with "10 values for 12 columns" errors regardless of format. Do not use.
