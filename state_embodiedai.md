@@ -6,8 +6,20 @@ This file tracks the progress of arxiv paper ingestion for the "embodiedai" topi
 `humanoid robot expressive gesture motion generation` (batch 148),
 `humanoid robot screwdriver tool use manipulation policy` (batch 149),
 `humanoid robot safety collision avoidance whole body control policy learning` (batch 150),
-`humanoid robot brachiation swinging arm locomotion agile movement` (batch 151)
-- **Papers processed**: 351
-- **Date range covered**: 2024-04-08 to 2026-05-18
-- **Last processed paper date**: 2026-05-18
-- **Active agents**: agent-20260518-151
+`humanoid robot brachiation swinging arm locomotion agile movement` (batch 151),
+`humanoid robot locomotion unified walking running recovery whole body state estimation` (batch 152),
+`ti:humanoid broad title search` (batches 153-175)
+- **Papers processed**: 2291
+- **Date range covered**: 2007-08-06 to 2011-12-09
+- **Last processed paper date**: 2011-12-09 (cat:cs.RO AND all:humanoid ANDNOT ti:humanoid final batch, start=950, EXHAUSTED 961/961)
+- **Active agents**: agent-20260519-loop2m
+- ti:humanoid broad title search EXHAUSTED — reached API pagination limit both descending and ascending, ~845 of 885 results covered
+`ti:"bipedal walking"` (batches 158-162, EXHAUSTED 49/49), `ti:"bipedal robot"` (batches 163-174, EXHAUSTED 90/90)
+`ti:"whole body control"` (batch 175, resumed, 84 total, 20/84 processed — HIGH overlap with ti:humanoid confirmed: 10/10 dupes at start=10)
+`all:"centroidal dynamics" AND all:legged` (batch 176, EXHAUSTED 14/14)
+`all:"hybrid zero dynamics" AND all:walking` (batch 177-179, EXHAUSTED 29/29)
+`all:"capture point" AND all:walking` (batch 180, EXHAUSTED 8/8)
+`all:"ZMP" AND all:bipedal` (batch 181, EXHAUSTED 7/7)
+`cat:cs.RO AND all:bipedal ANDNOT ti:bipedal ANDNOT ti:humanoid ANDNOT ti:quadruped` (batches 182-210, EXHAUSTED 245/245)
+`cat:cs.RO AND all:humanoid ANDNOT ti:humanoid` (batches 211-229, EXHAUSTED 961/961, ~70% new yield, added 349 papers)
+- **Active agents**: agent-20260519-loop2m
